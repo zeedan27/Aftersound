@@ -103,6 +103,8 @@ function requireLogin(string $redirectTo = '/index.php'): void {
     flash_set('error', 'Please log in first.');
     redirect($redirectTo);
   }
+  ensureFriendsTable();
+  ensureChatReadsTable();
 }
 
 function currentUserId(): ?int {
@@ -190,4 +192,62 @@ function pendingRequestExists(int $from, int $to): bool {
   $stmt = db()->prepare($sql);
   $stmt->execute([$from, $to]);
   return (bool)$stmt->fetchColumn();
+}
+
+/**
+ * -----------------------------
+ * CHAT READS HELPERS
+ * -----------------------------
+ * Expected "chat_reads" table (minimum):
+ *   user_id (INT)
+ *   peer_id (INT)
+ *   last_read_message_id (INT)
+ *   updated_at (DATETIME)
+ */
+function ensureChatReadsTable(): void {
+  static $done = false;
+  if ($done) return;
+  $done = true;
+
+  $sql = "
+    CREATE TABLE IF NOT EXISTS chat_reads (
+      user_id INT NOT NULL,
+      peer_id INT NOT NULL,
+      last_read_message_id INT NOT NULL DEFAULT 0,
+      updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+      PRIMARY KEY (user_id, peer_id),
+      KEY idx_chat_reads_peer (peer_id),
+      CONSTRAINT fk_chat_reads_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+      CONSTRAINT fk_chat_reads_peer FOREIGN KEY (peer_id) REFERENCES users(id) ON DELETE CASCADE
+    ) ENGINE=InnoDB
+  ";
+  db()->exec($sql);
+}
+
+/**
+ * -----------------------------
+ * FRIENDS TABLE HELPERS
+ * -----------------------------
+ * Expected "friends" table (minimum):
+ *   user_id (INT)
+ *   friend_id (INT)
+ *   created_at (DATETIME)
+ */
+function ensureFriendsTable(): void {
+  static $done = false;
+  if ($done) return;
+  $done = true;
+
+  $sql = "
+    CREATE TABLE IF NOT EXISTS friends (
+      user_id INT NOT NULL,
+      friend_id INT NOT NULL,
+      created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      PRIMARY KEY (user_id, friend_id),
+      KEY idx_friends_friend (friend_id),
+      CONSTRAINT fk_friends_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+      CONSTRAINT fk_friends_friend FOREIGN KEY (friend_id) REFERENCES users(id) ON DELETE CASCADE
+    ) ENGINE=InnoDB
+  ";
+  db()->exec($sql);
 }

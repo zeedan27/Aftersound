@@ -1260,6 +1260,184 @@ html,body{height:100%;margin:0;padding:0;}
   .chat-preview{font-size:15px;}
 }
 
+/* Dashboard search + results */
+.aftersound-dash .search-bar{
+  gap:12px;
+}
+
+.aftersound-dash .search-btn{
+  border:none;
+  border-radius:999px;
+  background:#e41f1f;
+  color:#fff;
+  font-family:ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+  font-weight:800;
+  font-size:14px;
+  padding:8px 16px;
+  cursor:pointer;
+  box-shadow:0 8px 0 rgba(0,0,0,0.08);
+  transition:transform 180ms ease;
+}
+
+.aftersound-dash .search-btn:hover{transform:translateY(-1px);}
+.aftersound-dash .search-btn:active{transform:translateY(0) scale(0.99);}
+
+.aftersound-dash .search-results{
+  margin-top:16px;
+  background:rgba(255,255,255,0.86);
+  border-radius:26px;
+  border:2px solid rgba(0,0,0,0.03);
+  box-shadow:0 18px 0 rgba(0,0,0,0.05);
+  padding:16px;
+}
+
+.aftersound-dash .search-results-head{
+  font-size:18px;
+  color:rgba(0,0,0,0.75);
+  margin-bottom:12px;
+}
+
+.aftersound-dash .search-results-list{
+  display:grid;
+  gap:12px;
+}
+
+.aftersound-dash .search-result{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:12px;
+  border-radius:18px;
+  border:2px solid rgba(0,0,0,0.03);
+  background:#fff;
+}
+
+.aftersound-dash .result-avatar{
+  width:48px;
+  height:48px;
+  border-radius:999px;
+  background:rgba(246,240,182,0.55);
+  border:2px solid rgba(0,0,0,0.05);
+  display:grid;
+  place-items:center;
+  font-family:ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+  font-weight:900;
+  color:rgba(0,0,0,0.6);
+}
+
+.aftersound-dash .result-info{
+  flex:1;
+  min-width:0;
+}
+
+.aftersound-dash .result-name{
+  font-family:ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+  font-weight:900;
+  font-size:16px;
+  color:rgba(0,0,0,0.8);
+}
+
+.aftersound-dash .result-meta{
+  font-family:ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+  font-size:12px;
+  color:rgba(0,0,0,0.5);
+}
+
+.aftersound-dash .result-actions{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.aftersound-dash .result-actions form{
+  margin:0;
+}
+
+.aftersound-dash .result-btn{
+  border:none;
+  border-radius:999px;
+  background:#e41f1f;
+  color:#fff;
+  font-family:ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+  font-weight:800;
+  font-size:12px;
+  padding:6px 14px;
+  cursor:pointer;
+  box-shadow:0 8px 0 rgba(0,0,0,0.08);
+  transition:transform 180ms ease;
+}
+
+.aftersound-dash .result-btn:hover{transform:translateY(-1px);}
+.aftersound-dash .result-btn:active{transform:translateY(0) scale(0.99);}
+
+.aftersound-dash .result-btn.result-btn-secondary{
+  background:#fff;
+  color:#e41f1f;
+  border:2px solid rgba(228,31,31,0.25);
+  box-shadow:0 8px 0 rgba(0,0,0,0.04);
+}
+
+.aftersound-dash .result-badge{
+  font-family:ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+  font-weight:800;
+  font-size:12px;
+  color:#e41f1f;
+  background:rgba(246,240,182,0.6);
+  padding:6px 12px;
+  border-radius:999px;
+  border:2px solid rgba(228,31,31,0.18);
+}
+
+.aftersound-dash .dash-alert{
+  margin-top:12px;
+  padding:12px 14px;
+  border-radius:16px;
+  font-family:ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+  font-size:13px;
+}
+
+.aftersound-dash .dash-alert-success{
+  background:rgba(46, 204, 113, 0.15);
+  color:#1f7a45;
+  border:2px solid rgba(46, 204, 113, 0.35);
+}
+
+.aftersound-dash .dash-alert-error{
+  background:rgba(231, 76, 60, 0.12);
+  color:#b12b21;
+  border:2px solid rgba(231, 76, 60, 0.3);
+}
+
+.aftersound-dash .requests{
+  margin-top:16px;
+  background:rgba(255,255,255,0.86);
+  border-radius:26px;
+  border:2px solid rgba(0,0,0,0.03);
+  box-shadow:0 18px 0 rgba(0,0,0,0.05);
+  padding:16px;
+}
+
+.aftersound-dash .requests-head{
+  font-size:18px;
+  color:rgba(0,0,0,0.75);
+  margin-bottom:12px;
+}
+
+.aftersound-dash .requests-list{
+  display:grid;
+  gap:12px;
+}
+
+.aftersound-dash .request-item{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:12px;
+  border-radius:18px;
+  border:2px solid rgba(0,0,0,0.03);
+  background:#fff;
+}
+
 /* AfterSound profile */
 *{box-sizing:border-box;}
 html,body{height:100%;margin:0;padding:0;}

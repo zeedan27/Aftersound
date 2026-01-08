@@ -2,8 +2,69 @@
 // speak-chat/chat.php
 require_once __DIR__ . '/config/db.php';
 
-// Protect page
 requireLogin();
+
+$userId = currentUserId();
+$peerId = isset($_GET['user']) ? (int)$_GET['user'] : 0;
+if (!$userId || $peerId <= 0 || $peerId === $userId) {
+  flash_set('error', 'Invalid chat.');
+  redirect('dashboard.php');
+}
+
+$peer = findUserById($peerId);
+if (!$peer) {
+  flash_set('error', 'User not found.');
+  redirect('dashboard.php');
+}
+$peerName = (string)($peer['username'] ?? '');
+$peerInitial = $peerName !== '' ? strtoupper($peerName[0]) : '?';
+
+if (isPost()) {
+  $message = getPost('message');
+  if ($message !== '') {
+    $sql = "INSERT INTO messages (from_user_id, to_user_id, message, created_at) VALUES (?, ?, ?, NOW())";
+    $stmt = db()->prepare($sql);
+    $stmt->execute([$userId, $peerId, $message]);
+  }
+  redirect('chat.php?user=' . $peerId);
+}
+
+ensureChatReadsTable();
+
+$messages = [];
+$sql = "
+  SELECT id, from_user_id, to_user_id, message, created_at
+  FROM messages
+  WHERE (from_user_id = :uid AND to_user_id = :peer)
+     OR (from_user_id = :peer AND to_user_id = :uid)
+  ORDER BY created_at ASC, id ASC
+  LIMIT 200
+";
+$stmt = db()->prepare($sql);
+$stmt->execute(['uid' => $userId, 'peer' => $peerId]);
+$messages = $stmt->fetchAll() ?: [];
+
+$lastIncomingId = 0;
+foreach ($messages as $msg) {
+  if ((int)$msg['to_user_id'] === $userId && (int)$msg['from_user_id'] === $peerId) {
+    $lastIncomingId = max($lastIncomingId, (int)$msg['id']);
+  }
+}
+
+if ($lastIncomingId > 0) {
+  $stmt = db()->prepare("
+    INSERT INTO chat_reads (user_id, peer_id, last_read_message_id)
+    VALUES (?, ?, ?)
+    ON DUPLICATE KEY UPDATE last_read_message_id = GREATEST(last_read_message_id, VALUES(last_read_message_id))
+  ");
+  $stmt->execute([$userId, $peerId, $lastIncomingId]);
+}
+
+function formatMessageTime(string $timestamp): string {
+  $time = strtotime($timestamp);
+  if ($time === false) return '';
+  return date('g:i A', $time);
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -33,12 +94,12 @@ requireLogin();
 
             <div class="person">
               <div class="avatar" aria-label="User avatar">
-                M
+                <?= e($peerInitial) ?>
                 <span class="online-dot" aria-hidden="true"></span>
               </div>
 
               <div class="name-status">
-                <div class="name">Maya Z.</div>
+                <div class="name"><?= e($peerName) ?></div>
                 <div class="status">Online now</div>
               </div>
             </div>
@@ -59,50 +120,38 @@ requireLogin();
         </div>
 
         <div class="chat-body" id="chatBody">
-          <div class="day-pill">Today, 10:23 AM</div>
+          <?php if (!$messages): ?>
+            <div class="day-pill">No messages yet</div>
+          <?php endif; ?>
 
-          <div class="msg-row left">
-            <div class="bubble left">
-              <p>Hey! Did you hear that new remix I sent over? &#x1F3B5;</p>
-              <div class="meta-time">10:23 AM</div>
-            </div>
-          </div>
-
-          <div class="msg-row right">
-            <div class="bubble right">
-              <p>Yesss! It&#x27;s absolutely fire &#x1F525; The bass drop at 2:30 is insane.</p>
-              <div class="meta-time">10:24 AM <span class="ticks" aria-hidden="true"><span class="tick"></span></span></div>
-            </div>
-          </div>
-
-          <div class="msg-row left">
-            <div class="bubble voice">
-              <div class="play" aria-hidden="true"></div>
-              <div class="wavebar" aria-hidden="true">
-                <span class="bar"></span><span class="bar"></span><span class="bar"></span>
-                <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+          <?php foreach ($messages as $msg): ?>
+            <?php
+              $isMine = (int)$msg['from_user_id'] === $userId;
+              $rowClass = $isMine ? 'right' : 'left';
+              $bubbleClass = $isMine ? 'right' : 'left';
+              $timeText = formatMessageTime((string)$msg['created_at']);
+            ?>
+            <div class="msg-row <?= $rowClass ?>">
+              <div class="bubble <?= $bubbleClass ?>">
+                <p><?= nl2br(e((string)$msg['message'])) ?></p>
+                <div class="meta-time">
+                  <?= e($timeText) ?>
+                  <?php if ($isMine): ?>
+                    <span class="ticks" aria-hidden="true"><span class="tick"></span></span>
+                  <?php endif; ?>
+                </div>
               </div>
-              <div class="dur">0:14</div>
-              <div class="meta-time" style="margin-top:0;color:rgba(0,0,0,.35);">10:25 AM</div>
             </div>
-          </div>
-
-          <div class="msg-row right">
-            <div class="bubble img-card right">
-              <img class="img" src="https://images.unsplash.com/photo-1455885666463-4d0b9e36a7f8?auto=format&amp;fit=crop&amp;w=1200&amp;q=70" alt="Shared memory" />
-              <div class="cap">Reminds me of this night!</div>
-              <div class="meta-time" style="padding:0 18px 16px;">10:26 AM <span class="ticks" aria-hidden="true"><span class="tick"></span></span></div>
-            </div>
-          </div>
+          <?php endforeach; ?>
         </div>
 
-        <div class="composer">
+        <form class="composer" method="post" action="chat.php?user=<?= $peerId ?>">
           <button class="plus-btn" type="button" aria-label="Add">
             <span>&#xFF0B;</span>
           </button>
 
           <div class="input-shell">
-            <input type="text" placeholder="Type a message..." />
+            <input type="text" name="message" placeholder="Type a message..." autocomplete="off" required />
             <button class="emoji-btn" type="button" aria-label="Emoji">
               <span>&#x263A;</span>
             </button>
@@ -111,7 +160,7 @@ requireLogin();
           <button class="mic-btn" type="button" aria-label="Voice">
             <span>&#x1F3A4;</span>
           </button>
-        </div>
+        </form>
       </div>
     </div>
   </div>
@@ -119,6 +168,13 @@ requireLogin();
   <script>
     const chatBody = document.getElementById("chatBody");
     chatBody.scrollTop = chatBody.scrollHeight;
+
+    const backBtn = document.querySelector(".back-btn");
+    if (backBtn) {
+      backBtn.addEventListener("click", () => {
+        window.location.href = "dashboard.php";
+      });
+    }
   </script>
 </body>
 </html>
