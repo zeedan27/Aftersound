@@ -85,7 +85,7 @@ $error   = flash_get('error');
         </div>
 
         <div class="chat-list" id="chatList">
-          <a class="chat-item" href="#">
+          <a class="chat-item" href="chat.php">
             <div class="avatar">
               <div class="status online" aria-hidden="true"></div>
               <div class="avatar-circle">D</div>
@@ -102,7 +102,7 @@ $error   = flash_get('error');
             </div>
           </a>
 
-          <a class="chat-item" href="#">
+          <a class="chat-item" href="chat.php">
             <div class="avatar">
               <div class="avatar-circle dark">?</div>
             </div>
@@ -116,7 +116,7 @@ $error   = flash_get('error');
             <div class="chat-meta"></div>
           </a>
 
-          <a class="chat-item" href="#">
+          <a class="chat-item" href="chat.php">
             <div class="avatar">
               <div class="status online" aria-hidden="true"></div>
               <div class="avatar-circle">A</div>
@@ -133,7 +133,7 @@ $error   = flash_get('error');
             </div>
           </a>
 
-          <a class="chat-item" href="#">
+          <a class="chat-item" href="chat.php">
             <div class="avatar">
               <div class="avatar-circle muted">S</div>
             </div>
@@ -147,7 +147,7 @@ $error   = flash_get('error');
             <div class="chat-meta"></div>
           </a>
 
-          <a class="chat-item" href="#">
+          <a class="chat-item" href="chat.php">
             <div class="avatar">
               <div class="avatar-circle muted">B</div>
             </div>
