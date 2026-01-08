@@ -41,40 +41,53 @@ if (isPost()) {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login - Speak Chat</title>
+  <title>AfterSound</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 <body>
-  <div class="auth-page login-page">
-    <div class="auth-card">
-      <h1>Login</h1>
+  <div class="aftersound-welcome">
+    <div class="asw-waves asw-waves-left" aria-hidden="true"></div>
+    <div class="asw-waves asw-waves-right" aria-hidden="true"></div>
 
-      <?php if ($success): ?>
-        <div class="alert success"><?= e($success) ?></div>
-      <?php endif; ?>
+    <main class="asw-center">
+      <div class="asw-stack">
+        <div class="asw-title-wrap asw-pop-1">
+          <div class="asw-title">WELCOME TO</div>
+        </div>
 
-      <?php if ($error): ?>
-        <div class="alert error"><?= e($error) ?></div>
-      <?php endif; ?>
+        <div class="asw-brand-row asw-pop-2">
+          <div class="asw-brand-pill">
+            <span class="asw-brand-text">AFTERSOUND</span>
+          </div>
 
-      <form method="POST" autocomplete="off">
-        <label>
-          Username or Email
-          <input type="text" name="identifier" placeholder="e.g. zeedan or zeedan@mail.com" required />
-        </label>
+          <div class="asw-burst" aria-hidden="true">
+            <span class="asw-burst-line l1"></span>
+            <span class="asw-burst-line l2"></span>
+            <span class="asw-burst-line l3"></span>
+            <span class="asw-burst-line l4"></span>
+            <span class="asw-burst-line l5"></span>
+          </div>
+        </div>
 
-        <label>
-          Password
-          <input type="password" name="password" placeholder="••••••••" required />
-        </label>
+        <div class="asw-sub asw-pop-3">
+          WHERE CONVERSATIONS GO BEYOND JUST WORDS.
+        </div>
 
-        <button type="submit">Login</button>
-      </form>
+        <div class="asw-under-line asw-pop-3" aria-hidden="true"></div>
 
-      <p class="auth-link">
-        Don’t have an account? <a href="register.php">Register</a>
-      </p>
-    </div>
+        <div class="asw-actions asw-pop-4">
+          <a class="asw-btn" href="register.php">
+            <span class="asw-btn-inner">sign up</span>
+          </a>
+          <a class="asw-btn asw-btn-secondary" href="login.php">
+            <span class="asw-btn-inner">log in</span>
+          </a>
+        </div>
+      </div>
+    </main>
   </div>
 </body>
 </html>
