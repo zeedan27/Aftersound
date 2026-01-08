@@ -78,6 +78,7 @@ function formatMessageTime(string $timestamp): string {
   <link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="assets/css/style.css" />
+  <script src="https://js.puter.com/v2/"></script>
 </head>
 <body>
   <div class="as-chat">
@@ -151,11 +152,24 @@ function formatMessageTime(string $timestamp): string {
           </button>
 
           <div class="input-shell">
-            <input type="text" name="message" placeholder="Type a message..." autocomplete="off" required />
+            <input type="text" name="message" id="messageInput" placeholder="Type a message..." autocomplete="off" required />
+            <select class="mood-select" id="moodSelect" aria-label="Mood">
+              <option value="">Mood</option>
+              <option value="joy">Joy</option>
+              <option value="melancholy">Melancholy</option>
+              <option value="curiosity">Curiosity</option>
+              <option value="anger">Anger</option>
+              <option value="serenity">Serenity</option>
+              <option value="excitement">Excitement</option>
+            </select>
             <button class="emoji-btn" type="button" aria-label="Emoji">
               <span>&#x263A;</span>
             </button>
           </div>
+
+          <button class="img-btn" type="button" id="imgBtn" aria-label="Send image">
+            <span>&#x1F5BC;</span>
+          </button>
 
           <button class="mic-btn" type="button" aria-label="Voice">
             <span>&#x1F3A4;</span>
@@ -173,6 +187,98 @@ function formatMessageTime(string $timestamp): string {
     if (backBtn) {
       backBtn.addEventListener("click", () => {
         window.location.href = "dashboard.php";
+      });
+    }
+
+    const messageInput = document.getElementById("messageInput");
+    const imgBtn = document.getElementById("imgBtn");
+    const moodSelect = document.getElementById("moodSelect");
+
+    const moods = {
+      joy: "linear-gradient(135deg, hsl(45, 100%, 60%), hsl(60, 100%, 70%))",
+      melancholy: "linear-gradient(135deg, hsl(220, 50%, 40%), hsl(240, 40%, 30%))",
+      curiosity: "linear-gradient(135deg, hsl(180, 70%, 55%), hsl(280, 60%, 65%))",
+      anger: "linear-gradient(135deg, hsl(0, 85%, 45%), hsl(20, 90%, 40%))",
+      serenity: "linear-gradient(135deg, hsl(200, 60%, 70%), hsl(160, 50%, 80%))",
+      excitement: "linear-gradient(135deg, hsl(330, 90%, 60%), hsl(50, 95%, 65%))",
+    };
+
+    function mapToImagePrompt(userText) {
+      const text = userText.toLowerCase();
+
+      if (text.includes("go home") || text.includes("sleep") || text.includes("bed") || text.includes("tired")) {
+        return "a cozy bedroom with a comfortable bed, soft warm lighting, peaceful atmosphere, ultra realistic";
+      }
+      if (text.includes("gaming") || text.includes("play game") || text.includes("fifa") || text.includes("video game")) {
+        return "a modern gaming setup with a big screen showing a football video game like FIFA, RGB lights, gaming controller on the desk, ultra realistic";
+      }
+      if (text.includes("study") || text.includes("homework") || text.includes("exam") || text.includes("work") || text.includes("office")) {
+        return "a modern study desk with a laptop, books, notebook, and a cup of coffee on it, soft daylight, realistic";
+      }
+
+      return userText;
+    }
+
+    function addImageBubble(imgElement, caption) {
+      const row = document.createElement("div");
+      row.className = "msg-row right";
+
+      const bubble = document.createElement("div");
+      bubble.className = "bubble img-card right";
+
+      imgElement.className = "img";
+      bubble.appendChild(imgElement);
+
+      if (caption) {
+        const cap = document.createElement("div");
+        cap.className = "cap";
+        cap.textContent = caption;
+        bubble.appendChild(cap);
+      }
+
+      const time = document.createElement("div");
+      time.className = "meta-time";
+      const now = new Date();
+      const hours = now.getHours() % 12 || 12;
+      const minutes = String(now.getMinutes()).padStart(2, "0");
+      const ampm = now.getHours() >= 12 ? "PM" : "AM";
+      time.textContent = `${hours}:${minutes} ${ampm}`;
+      bubble.appendChild(time);
+
+      row.appendChild(bubble);
+      chatBody.appendChild(row);
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    if (moodSelect) {
+      moodSelect.addEventListener("change", (e) => {
+        const val = e.target.value;
+        if (!val) {
+          chatBody.style.setProperty("--chat-mood", "");
+          return;
+        }
+        const gradient = moods[val] || "";
+        chatBody.style.setProperty("--chat-mood", gradient);
+      });
+    }
+
+    if (imgBtn) {
+      imgBtn.addEventListener("click", async () => {
+        const text = (messageInput?.value || "").trim();
+        if (!text) return;
+        const prompt = mapToImagePrompt(text);
+
+        imgBtn.disabled = true;
+        imgBtn.classList.add("is-loading");
+        try {
+          const imgElement = await puter.ai.txt2img(prompt);
+          addImageBubble(imgElement, `Image for: "${text}"`);
+        } catch (err) {
+          alert(err?.message || "Image generation failed.");
+        } finally {
+          imgBtn.disabled = false;
+          imgBtn.classList.remove("is-loading");
+        }
       });
     }
   </script>

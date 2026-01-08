@@ -2138,7 +2138,8 @@ html,body{height:100%;margin:0;padding:0;}
   padding:18px 18px 10px;
   overflow:auto;
   scroll-behavior:smooth;
-  background:linear-gradient(180deg, rgba(255,255,255,.35), rgba(255,255,255,.15));
+  background:
+    var(--chat-mood, linear-gradient(180deg, rgba(255,255,255,.35), rgba(255,255,255,.15)));
 }
 
 .day-pill{
@@ -2377,6 +2378,39 @@ html,body{height:100%;margin:0;padding:0;}
 .emoji-btn:active{transform:translateY(0) scale(.99);}
 .emoji-btn span{font-size:18px;}
 
+.mood-select{
+  border:2px solid rgba(0,0,0,.04);
+  border-radius:999px;
+  padding:6px 10px;
+  font-family:ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+  font-weight:800;
+  font-size:12px;
+  color:rgba(0,0,0,.7);
+  background:#fff;
+}
+
+.img-btn{
+  width:52px;
+  height:52px;
+  border-radius:18px;
+  border:2px solid rgba(0,0,0,.05);
+  background:rgba(255,255,255,.95);
+  box-shadow:0 14px 0 rgba(0,0,0,.05);
+  cursor:pointer;
+  transition:transform 180ms ease, filter 180ms ease;
+  display:grid;
+  place-items:center;
+  flex:0 0 auto;
+}
+
+.img-btn:hover{transform:translateY(-2px);}
+.img-btn:active{transform:translateY(0) scale(.99);}
+.img-btn span{font-size:18px;color:rgba(0,0,0,.6);}
+
+.img-btn.is-loading{
+  filter:grayscale(0.4);
+  cursor:progress;
+}
 .mic-btn{
   width:58px;
   height:58px;
